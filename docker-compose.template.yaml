@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  backend:
+    build: .
+    container_name: my-app
+    ports:
+      - 8080:{% PORT_SPECIFIED %}
+    depends_on:
+      - postgres
+    environment:
+      - PORT={% PORT_SPECIFIED %}
+      - HOST=postgres
+      - DBUserName=postgres
+      - DBUserPassword={% PASSWORD_SPECIFIED_IN_DB_SERVICE %}
+      - DBName={% DBName %}
+      - DBPort=5432
+  postgres:
+    image: postgres
+    container_name: myapp_db
+    environment:
+      - POSTGRES_PASSWORD={% PASSWORD %}
+      - POSTGRES_DB={% DBName %}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
