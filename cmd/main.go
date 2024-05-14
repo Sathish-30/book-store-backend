@@ -1,11 +1,12 @@
 package main
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/sathish-30/book-management/internal/config"
 	db "github.com/sathish-30/book-management/internal/database"
+	"github.com/sathish-30/book-management/internal/handler"
+	"github.com/sathish-30/book-management/internal/middleware"
 )
 
 func init() {
@@ -17,11 +18,7 @@ func init() {
 func main() {
 	PORT := ":" + config.Configuration.PORT
 	app := http.NewServeMux()
-	app.HandleFunc("GET /v1/healthcheck", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusAccepted)
-		json.NewEncoder(w).Encode(map[string]string{
-			"Message": "Health check",
-		})
-	})
+	app.HandleFunc("GET /v1/healthcheck", handler.HealthcheckHandler)
+	app.Handle("POST /v1/signup", middleware.SetContentTypeJson(http.HandlerFunc(handler.SignUpHandler)))
 	http.ListenAndServe(PORT, app)
 }
